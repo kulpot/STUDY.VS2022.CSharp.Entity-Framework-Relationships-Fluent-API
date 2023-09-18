@@ -60,7 +60,8 @@ class PlayList
 {
     public int ID { get; set; }
     public string Title { get; set; }
-    public List<Video> Videos { get; set; }     // Auto List Mapping table - SQLserver
+    //public List<Video> Videos { get; set; }     // Auto List Mapping table - SQLserver
+    public ICollection<Video> Videos { get; set; }     // ICollection -- also a ManytoMany Relationship
     public override string ToString()
     {
         string ret = Title + ": ";
@@ -77,7 +78,8 @@ class Video
     public string Description { get; set; }
 
     // Many-to-Manty Relationship -- added navigation
-    public List<PlayList> MyPlaylists { get; set; }     // Auto List Mapping table - SQLserver
+    //public List<PlayList> MyPlaylists { get; set; }     // Auto List Mapping table - SQLserver
+    public ICollection<PlayList> MyPlaylists { get; set; }     // ICollection -- also a ManytoMany Relationship
 }
 
 class MeContext : DbContext     // PipeLine --SQLServer and VS-- Schema
@@ -95,30 +97,47 @@ class MainClass
 {
     static void Main()
     {
-        MeContext db = new MeContext(); // Pipeline to VS and EntityFramework SQLServer app
+        MeContext db = new MeContext();
         db.Database.Delete();
 
-        PlayList mePlaylist = new PlayList();
-        mePlaylist.Title = "Entity Framework";
-        PlayList meOtherPlaylist = new PlayList();
-        meOtherPlaylist.Title = "Epicness";
-
-        Video meAwesomeVideo = new Video
+        Video goodVid = new Video
         {
-            Title = "The Next Viral Hit",
-            Description = "Share this with your friends."
+            Title = "Me Good Video",
+            Description = "Me good description"
         };
+        PlayList thePlaylist = new PlayList { Title = "Me Awesome Playlist" };
+        thePlaylist.Videos = new List<Video> { goodVid };
 
-        mePlaylist.Videos = new List<Video> { meAwesomeVideo };     // Auto List Mapping table - SQLserver
-        meOtherPlaylist.Videos = new List<Video> { meAwesomeVideo };        // Auto List Mapping table - SQLserver
-
-        db.Playlists.Add(mePlaylist);
-        db.Playlists.Add(meOtherPlaylist);
-
-        Console.WriteLine(mePlaylist);
-        Console.WriteLine(meOtherPlaylist);
-
+        db.Playlists.Add(thePlaylist);
         db.SaveChanges();
+
+
+
+
+        //MeContext db = new MeContext(); // Pipeline to VS and EntityFramework SQLServer app
+        //db.Database.Delete();
+        //
+        //PlayList mePlaylist = new PlayList();
+        //mePlaylist.Title = "Entity Framework";
+        //PlayList meOtherPlaylist = new PlayList();
+        //meOtherPlaylist.Title = "Epicness";
+        //
+        //Video meAwesomeVideo = new Video
+        //{
+        //    Title = "The Next Viral Hit",
+        //    Description = "Share this with your friends."
+        //};
+        //
+        //mePlaylist.Videos = new List<Video> { meAwesomeVideo };     // Auto List Mapping table - SQLserver
+        //meOtherPlaylist.Videos = new List<Video> { meAwesomeVideo };        // Auto List Mapping table - SQLserver
+        //
+        //db.Playlists.Add(mePlaylist);
+        //db.Playlists.Add(meOtherPlaylist);
+        //
+        //Console.WriteLine(mePlaylist);
+        //Console.WriteLine(meOtherPlaylist);
+        //
+        //db.SaveChanges();
 
 
 
