@@ -60,8 +60,8 @@ class PlayList
 {
     public int ID { get; set; }
     public string Title { get; set; }
-    //public List<Video> Videos { get; set; }     // Auto List Mapping table - SQLserver
-    public ICollection<Video> Videos { get; set; }     // ICollection -- also a ManytoMany Relationship
+    public List<Video> Videos { get; set; }     // Auto List Mapping table - SQLserver
+    //public ICollection<Video> Videos { get; set; }     // ICollection -- also a ManytoMany Relationship
     public override string ToString()
     {
         string ret = Title + ": ";
@@ -78,8 +78,9 @@ class Video
     public string Description { get; set; }
 
     // Many-to-Manty Relationship -- added navigation
+            // ----------------------OneToMany Relationship--- if no List<> here--------------------
     //public List<PlayList> MyPlaylists { get; set; }     // Auto List Mapping table - SQLserver
-    public ICollection<PlayList> MyPlaylists { get; set; }     // ICollection -- also a ManytoMany Relationship
+    //public ICollection<PlayList> MyPlaylists { get; set; }     // ICollection -- also a ManytoMany Relationship
 }
 
 class MeContext : DbContext     // PipeLine --SQLServer and VS-- Schema
@@ -90,6 +91,33 @@ class MeContext : DbContext     // PipeLine --SQLServer and VS-- Schema
     }
     public DbSet<Video> Videos { get; set; }
     public DbSet<PlayList> Playlists { get; set; }
+
+    // -------Describe further for Relation (ManyToMany)
+
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PlayList>().HasMany(p => p.Videos).WithMany();  // high level metadata 
+    }       // recommendation for knowledge in "HOOK Design Pattern "
+    /*
+     *      ---EntityFramework SQLServer
+     * 
+     * use MyTestDb
+
+       select *
+       from Videos
+       
+       select *
+       from PlayLists
+       
+       select *
+       --from VideoPlayLists
+       from PlayListVideos		-- Mapping Table for OnModelCreating
+       
+       use master
+     * 
+     * 
+     */
+
 
 }
 
